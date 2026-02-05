@@ -8,37 +8,38 @@ FRAME_DELAY = 1 / FPS
 
 def main():
     start = "aaaaaaaa"
-    target = "nextstop"
-    target = input("Enter hidden text to be debugged: ")
-
-    start = start.lower()
-    target = target.lower()
-
-    width = max(len(start), len(target))
-    start = start.ljust(width)
-    target = target.ljust(width)
-
-    panels = [
-        FlipPanel(s, t, 3.0)
-        for s, t in zip(start, target)
-    ]
-
     while True:
-        now = time.monotonic()
+        target = input("Enter hidden text to be debugged: ")
 
-        for panel in panels:
-            panel.update(now)
+        start = start.lower()
+        target = target.lower()
 
-        sys.stdout.write("\r")
-        sys.stdout.write("".join(panel.char() for panel in panels))
-        sys.stdout.flush()
+        width = max(len(start), len(target))
+        start = start.ljust(width)
+        target = target.ljust(width)
 
-        if all(panel.done() for panel in panels):
-            break
+        panels = [
+            FlipPanel(s, t, 3.0)
+            for s, t in zip(start, target)
+        ]
 
-        time.sleep(FRAME_DELAY)
+        while True:
+            now = time.monotonic()
 
-    print()  # newline when finished
+            for panel in panels:
+                panel.update(now)
+
+            sys.stdout.write("\r")
+            sys.stdout.write("".join(panel.char() for panel in panels))
+            sys.stdout.flush()
+
+            if all(panel.done() for panel in panels):
+                break
+
+            time.sleep(FRAME_DELAY)
+
+        print()  # newline when finished
+        start = target  # next round starts from the last target
 
 if __name__ == "__main__":
     main()
